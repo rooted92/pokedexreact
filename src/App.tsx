@@ -1,14 +1,13 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import NavbarComponent from './components/NavbarComponent';
-// import Pikachu from './assets/pikachu.svg';
 import Pawprints from './assets/pawprints.svg';
 import Heart from './assets/heart.svg';
 import HeartOutline from './assets/heartOutline.svg';
-import Quotes from './assets/quotes.svg';
-import Bracelet from './assets/bracelet.svg';
+import Location from './assets/location.svg';
+import Brain from './assets/brain.svg';
 import Pikachu from './assets/pikachu.svg';
-import { GetRandomPokemon, GetPokemonByNameOrId, FormatAndCapitalize, DetermineFontColor } from './services/data';
+import { FormatAndCapitalize, DetermineFontColor } from './services/data';
 
 
 
@@ -17,8 +16,7 @@ const App = () => {
   const [pokemonName, setPokemonName] = useState<string>('');
   const [type, setType] = useState<string>('');
   const [typeClass, setTypeClass] = useState<string>('');
-  const [randomPokemon, setRandomPokemon] = useState<any>({});
-  // const [isSearched, setIsSearched] = useState<boolean>(false);
+  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [location, setLocation] = useState<string>('');
   const [movesArray, setMovesArray] = useState<string>('');
   const [funFactoids, setFunFactoids] = useState<string>('');
@@ -54,12 +52,7 @@ const App = () => {
     let movesArray: Array<string> = movesArr.map(moves => {
       return FormatAndCapitalize(moves.move.name);
     });
-    // console.log(movesArray.join(', '));
-    // console.log(movesArray);
-    setMovesArray(movesArray.join(', '));
-    // console.log(movesArr.map(moves => {
-    //   return moves.move.name
-    // }));    
+    setMovesArray(movesArray.join(', '));   
   }
 
   const handleRandomMovesArray = (movesArr: any[]) => {
@@ -93,6 +86,23 @@ const App = () => {
     setSprites(arr);
   }
 
+  const handleAddToFavorites = () => {
+    setIsSaved(true);
+    setPokemonData((prevPokemonData: any) => ({...prevPokemonData, isSaved: true}));
+    localStorage.setItem('pokemonData', JSON.stringify(pokemonData));
+  }
+
+  const handleRemoveFromFavorites = () => {
+    setIsSaved(false);
+    setPokemonData((prevPokemonData: any) => ({...prevPokemonData, isSaved: false}));
+    localStorage.removeItem('pokemonData');
+  }
+
+  const handleToggleFavorites = () => {
+    if(isSaved) handleAddToFavorites();
+    else handleRemoveFromFavorites();
+  }
+
   useEffect(() => {
     const storedData = localStorage.getItem('pokemonData');
     const parsedData = storedData ? JSON.parse(storedData) : null;
@@ -104,10 +114,6 @@ const App = () => {
     // console.log(pokemonData);
     localStorage.setItem('pokemonData', JSON.stringify(pokemonData));
   }, [pokemonData]);
-
-  // useEffect(() => {
-  //   console.log(sprites);
-  // }, [sprites])
 
   return (
     <>
@@ -137,12 +143,15 @@ const App = () => {
           </div>
           <div className='grid grid-cols-7 mt-5 gap-4'>
             <p className={typeClass}>{FormatAndCapitalize(type)}</p>
-            <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-9 w-auto' src={Bracelet} alt="location icon" /> {location}</p>
-            <button type='button' className='flex justify-end'>
+            <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
+            <button
+            type='button'
+            className='flex justify-end'
+            onClick={handleToggleFavorites}>
               <img
                 title='Add to Favorites'
                 className='h-9 w-auto items-end'
-                src={HeartOutline}
+                src={isSaved? Heart : HeartOutline}
                 alt="Favorites Icon" />
             </button>
           </div>
@@ -174,7 +183,7 @@ const App = () => {
         {/* Third Column */}
         <div className=''>
           <img src="" alt="" />
-          <p className='headers'><img className='inline h-9 w-auto mr-2' src={Quotes} alt="quotes icon" />Fun Factoids</p>
+          <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
           <p className='mt-7'>{funFactoids}</p>
           <p className='headers mt-6'>Abilities</p>
           <p>{abilities}</p>

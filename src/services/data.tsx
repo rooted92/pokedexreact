@@ -1,5 +1,3 @@
-import { error } from "console";
-
 const GetPokemonByNameOrId = async (input: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
     const data = await response.json();
@@ -31,26 +29,6 @@ const GetAllAbilities = async (name: string) => {
     return abilitiesArr;
 }
 
-// GetRandomPokemon();
-
-// this function will use location encounter url to pinpoint location name
-// const GetEncounterURL = async (encounterURL: string) => {
-//     const response = await fetch(encounterURL);
-//     const data = await response.json();
-//     // console.log('Data from EncounterURL Function!!');
-//     // console.log(data)
-//     let location: string = '';
-//     if(data.length === 0){
-//         location = 'LOCATION_UNDEFINED';
-//     }
-//     else {
-//         return data[0].location_area.url;
-//     }
-//     // console.log(data[0].location_area.url);
-//     return location;
-// }
-// GetEncounterURL("https://pokeapi.co/api/v2/pokemon/26/encounters");
-
 const GetLocationByID = async (id: string | number) => {
     const response = await fetch(`https://pokeapi.co/api/v2/location/${id}/`);
     const data = await response.json();
@@ -69,21 +47,6 @@ const GetSpritesByName = (arr: string[]) => {
     });
     return urlArr;
 }
-
-// this function wil use location area url from GetEncounterURL() function and return location name
-// const GetLocationName = async (locationURL: string) => {
-//     const response = await fetch(locationURL);
-//     const data = await response.json();
-//     console.log(data.names[0].name);
-//     console.log('GETLOCATION DATA');
-//     console.log(data)
-//     let location:string;
-//     // if(!data.names[0].name) location = data.names[0].name;
-//     // else location = 'Location Unknown';
-//     data.names[0].name ? location = data.names[0].name : location = 'Location Unknow';
-//     // console.log('Here is location: ', location)
-//     return location;
-// }
 
 // this function will return an array of all flavor text
 const GetFlavorText = async (name: string) => {
@@ -203,7 +166,6 @@ const DetermineFontColor = (type: string) => {
     return textColor;
 }
 
-// GetLocationName('https://pokeapi.co/api/v2/location-area/323/');
 const FormatAndCapitalize = (words: string) => {
     // console.log(words);
     let formattedStr: string;

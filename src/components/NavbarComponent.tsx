@@ -2,7 +2,7 @@ import PokeballImg from '../assets/pokeball.svg';
 import PokeheartImg from '../assets/heart.svg';
 import PokeballRandomizerImg from '../assets/qmark.png';
 import '../index.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetAllAbilities, GetSpritesByName } from '../services/data';
 
 interface NavbarProps {
@@ -76,10 +76,6 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
         getLocationForRandomData(location);
     }
 
-    // useEffect(() => {
-    //     console.log('Hello');
-    // }, []);
-
     return (
         <>
             <div className="mt-5 flex justify-between">
@@ -117,7 +113,6 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
                             }}      
                         />
                         <label htmlFor="search" hidden>search</label>
-                        {/* <button className='self-end'>search</button> */}
                     </div>
                 </div>
                 <div className='h-28 w-16'>
