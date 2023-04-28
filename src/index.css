@@ -31,7 +31,7 @@ body {
 
 p {
   font-family: Prompt;
-  color: rgba(229, 186, 115, 1);
+  color: rgb(157, 97, 0);
 }
 
 .darkBrownText {
@@ -39,7 +39,7 @@ p {
 }
 
 .searchBar{
-  width: 9.375rem;
+  width: 12.375rem;
   height: 2.1rem;
   padding: 0rem;
   padding-left: .2rem;
@@ -67,6 +67,79 @@ input.searchBar:focus {
   font-size: 2rem;
   color: rgba(197, 137, 64, 1);
 }
+
+.normalType {
+  color: rgb(168, 167, 122);
+}
+
+.fireType {
+  color: rgb(238, 129, 48);
+}
+
+.waterType {
+  color: rgb(99, 144, 240);
+}
+
+.electricType {
+  color: rgb(247, 208, 44);
+}
+
+.grassType {
+  color: rgb(122, 199, 76);
+}
+
+.iceType {
+  color: rgb(150, 217, 214);
+}
+
+.fightingType {
+  color: rgb(194, 46, 40);
+}
+
+.poisonType {
+  color: rgb(163, 62, 161);
+}
+
+.groundType {
+  color: rgb(226, 191, 101);
+}
+
+.flyingType {
+  color: rgb(169, 143, 243);
+}
+
+.psychicType {
+  color: rgb(249, 85, 135);
+}
+
+.bugType {
+  color: rgb(166, 185, 26);
+}
+
+.rockType {
+  color: rgb(182, 161, 54);
+}
+
+.ghostType {
+  color: rgb(115, 87, 151);
+}
+
+.dragonType {
+  color: rgb(111, 53, 252);
+}
+
+.darkType {
+  color: rgb(112, 87, 70);
+}
+
+.steelType {
+  color: rgb(183, 183, 206);
+}
+
+.fairyType {
+  color: rgb(214, 133, 173);
+}
+
 
 /* Using webkit-scrollbar to style default scrollbar. By doing this you sacrifice compatibility with browsers who do not support this psuedo element */
 

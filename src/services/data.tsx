@@ -1,7 +1,7 @@
 import { error } from "console";
 
 const GetPokemonByNameOrId = async (input: string) => {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}/`);
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
     const data = await response.json();
     console.log(data);
     return data;
@@ -61,10 +61,13 @@ const GetLocationByID = async (id: string | number) => {
 GetLocationByID(6);
 
 const GetSpritesByName = (arr: string[]) => {
+    let urlArr: string[] = [];
     arr.map(async (pokemon: string) => {
         let data = await GetPokemonByNameOrId(pokemon);
-        console.log(data);
+        console.log(data.sprites.other.dream_world.front_default);
+        urlArr.push(data.sprites.other.dream_world.front_default);
     });
+    return urlArr;
 }
 
 // this function wil use location area url from GetEncounterURL() function and return location name
@@ -123,7 +126,7 @@ const GetEvolutionArray = async (url: string) => {
     const data = await response.json();
     // console.log('EVOLUTION ARRAY');
     // console.log(data.chain.species.name);
-    let evolutionArr: Array<string> = [data.chain.species.name];
+    let evolutionArr: string[] = [data.chain.species.name];
     if(data.chain.evolves_to.length !== 0){
         // console.log(data.chain.evolves_to[0].species.name);
         data.chain.evolves_to.map((item: any) => {
@@ -137,6 +140,67 @@ const GetEvolutionArray = async (url: string) => {
     }
     console.log(evolutionArr);
     return evolutionArr;
+}
+
+const DetermineFontColor = (type: string) => {
+    let textColor: string = '';
+    switch (type) {
+        case 'normal':
+            textColor = 'self-center normalType';
+            break;
+        case 'fire':
+            textColor = 'self-center fireType';
+            break;
+        case 'water':
+            textColor = 'self-center waterType';
+            break;
+        case 'electric':
+            textColor = 'self-center electricType';
+            break;
+        case 'grass':
+            textColor = 'self-center grassType';
+            break;
+        case 'ice':
+            textColor = 'self-center iceType';
+            break;
+        case 'fighting':
+            textColor = 'self-center fightingType';
+            break;
+        case 'poison':
+            textColor = 'self-center poisonType';
+            break;
+        case 'ground':
+            textColor = 'self-center groundType';
+            break;
+        case 'flying':
+            textColor = 'self-center flyingType';
+            break;
+        case 'psychic':
+            textColor = 'self-center psychicType';
+            break;
+        case 'bug':
+            textColor = 'self-center bugType';
+            break;
+        case 'rock':
+            textColor = 'self-center rockType';
+            break;
+        case 'ghost':
+            textColor = 'self-center ghostType';
+            break;
+        case 'dragon':
+            textColor = 'self-center dragonType';
+            break;
+        case 'dark':
+            textColor = 'self-center darkType';
+            break;
+        case 'steel':
+            textColor = 'self-center steelType';
+            break;
+        case 'fairy':
+            textColor = 'self-center fairyType';
+            break;
+    }
+    return textColor;
 }
 
 // GetLocationName('https://pokeapi.co/api/v2/location-area/323/');
@@ -155,4 +219,4 @@ const FormatAndCapitalize = (words: string) => {
     return formattedStr;
 }
 
-export {GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities};
+export {GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor};  

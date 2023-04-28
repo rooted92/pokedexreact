@@ -3,7 +3,7 @@ import PokeheartImg from '../assets/heart.svg';
 import PokeballRandomizerImg from '../assets/qmark.png';
 import '../index.css';
 import { useEffect, useState } from 'react';
-import { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetAllAbilities } from '../services/data';
+import { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetAllAbilities, GetSpritesByName } from '../services/data';
 
 interface NavbarProps {
     getPokemonData: (data: any) => void;
@@ -15,9 +15,12 @@ interface NavbarProps {
     getFunFactoid: (text: string) => void;
     getRandomFactoids: (text: string) => void;
     getAllAbilities: (text: string) => void;
+    getRandomAbilities: (text: string) => void;
+    getSprites: (arr: string[]) => void;
+    getRandomSprites: (arr: string[]) => void;
 }
 
-const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLocationForRandomData, getMovesArray, getRandomMovesArray, getFunFactoid, getRandomFactoids, getAllAbilities}: NavbarProps): JSX.Element => {
+const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLocationForRandomData, getMovesArray, getRandomMovesArray, getFunFactoid, getRandomFactoids, getAllAbilities, getRandomAbilities, getSprites, getRandomSprites}: NavbarProps): JSX.Element => {
 
     const [pokemonVal, setPokemonVal] = useState<string>('');
 
@@ -27,37 +30,22 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
         console.log(pokemonData);
         console.log(pokemonData.location_area_encounters);
         getPokemonData(pokemonData);
-        // const encounter = await GetEncounterURL(pokemonData.location_area_encounters);
-        // const location = await GetLocationName(encounter);
         const location = await GetLocationByID(pokemonData.id);
         getLocationData(location);
         // console.log(pokemonData.moves);
         getMovesArray(pokemonData.moves);
-        // const getByName = await GetLocationByName(pokemonData.name)
-        // console.log(getByName);
         const speciesData = await GetSpeciesData(pokemonData.name);
         const flavorText = await GetFlavorText(pokemonData.name);
         // console.log(flavorText);
         const randomFlavorText =  GetRandomFlavorText(flavorText);
         // console.log(randomFlavorText);
         getFunFactoid(randomFlavorText);
-        // console.log(flavorText.flavor_text_entries.filter((item:any) => {
-        //     if(item.language.name === 'en'){
-        //         console.log(item.flavor_text)
-        //     }
-        // }));
-        // console.log(speciesData.evolution_chain.url);
-        const evolutionData = await GetEvolutionChain(speciesData.evolution_chain.url);
-        // const evolutionArray = await GetAllEvolutionNames(speciesData.evolution_chain.url);
-        // console.log(evolutionArray);
         const evolutionArray = await GetEvolutionArray(speciesData.evolution_chain.url);
+        const sprites = GetSpritesByName(evolutionArray);
+        console.log(sprites);
+        getSprites(sprites);
         // console.log('EVOLUTION ARRAY');
         // console.log(evolutionArray);
-        
-        // console.log(evolutionData.chain.species.name);
-        // console.log(evolutionData.chain.evolves_to.map((item: any) => console.log(item.species.name)))
-        // console.log(evolutionData.chain)
-        // console.log(evolutionData.chain.evolves_to[0].evolves_to[0].species.name)
 
         const abilities = await GetAllAbilities(searchVal);
         console.log(abilities.join(', '));
@@ -73,15 +61,17 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
         const flavorText = await GetFlavorText(randomPokemonData.name);
         const randomText = GetRandomFlavorText(flavorText);
         getRandomFactoids(randomText);
+        const abilities = await GetAllAbilities(randomPokemonData.name);
+        getRandomAbilities(abilities.join(', '));
+        const speciesData = await GetSpeciesData(randomPokemonData.name);
+        const evolutionArray = await GetEvolutionArray(speciesData.evolution_chain.url);
+        const sprites = GetSpritesByName(evolutionArray);
+        console.log(sprites);
+        getRandomSprites(sprites);
         return randomPokemonData.id;
-        // const encounterForRndData = await GetEncounterURL(randomPokemonData.location_area_encounters);
-        // const locationForRndData = await GetLocationName(encounterForRndData);
-        // getLocationForRandomData(locationForRndData); 
     }
 
     const handleRandomLocation = async (id : number) => {
-        // const encounter = await GetEncounterURL(url);
-        // const location = await GetLocationName(encounter);
         const location = await GetLocationByID(id)
         getLocationForRandomData(location);
     }
@@ -94,12 +84,13 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
         <>
             <div className="mt-5 flex justify-between">
                 <div className='bgLightBrown h-28 w-16 grid justify-items-center rounded-e-md'>
-                    <button type='button'>
+                    <button title='Favorites' type='button'>
                         <img className='h-9 w-9' src={PokeheartImg} alt="Favorites Icon" />
                     </button>
                     <button
                     className='w-max'
                     type='button'
+                    title='Pokemon Randomizer'
                     onClick={async () => {
                         await handleRandomPokemon();
                         let id = await handleRandomPokemon();
@@ -121,7 +112,7 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
                                 if(e.key === 'Enter'){
                                     // console.log('Enter pressed!!');
                                     // console.log(pokemonVal);
-                                    await handleSearch(pokemonVal);
+                                    await handleSearch(pokemonVal.toLowerCase());
                                 }
                             }}      
                         />
