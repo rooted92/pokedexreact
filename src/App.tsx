@@ -7,7 +7,7 @@ import HeartOutline from './assets/heartOutline.svg';
 import Location from './assets/location.svg';
 import Brain from './assets/brain.svg';
 import Pikachu from './assets/pikachu.svg';
-import { FormatAndCapitalize, DetermineFontColor } from './services/data';
+import { FormatAndCapitalize, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved } from './services/data';
 
 
 
@@ -17,6 +17,7 @@ const App = () => {
   const [type, setType] = useState<string>('');
   const [typeClass, setTypeClass] = useState<string>('');
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [inFavorites, setInFavorites] = useState<boolean>(false); 
   const [location, setLocation] = useState<string>('');
   const [movesArray, setMovesArray] = useState<string>('');
   const [funFactoids, setFunFactoids] = useState<string>('');
@@ -86,22 +87,35 @@ const App = () => {
     setSprites(arr);
   }
 
-  const handleAddToFavorites = () => {
-    setIsSaved(true);
-    setPokemonData((prevPokemonData: any) => ({...prevPokemonData, isSaved: true}));
-    localStorage.setItem('pokemonData', JSON.stringify(pokemonData));
-  }
+  // const handleAddToFavorites = () => {
+  //   SavePokemonToFavorites(pokemonData.name);
+  //   setIsSaved(true);
+  //   console.log(isSaved);
+  // }
 
-  const handleRemoveFromFavorites = () => {
-    setIsSaved(false);
-    setPokemonData((prevPokemonData: any) => ({...prevPokemonData, isSaved: false}));
-    localStorage.removeItem('pokemonData');
-  }
+  // const handleRemoveFromFavorites = () => {
+  //   RemovePokemonFromFavorites(pokemonData.name);
+  //   setIsSaved(false);
+  //   console.log(isSaved);
+  // }
 
-  const handleToggleFavorites = () => {
-    if(isSaved) handleAddToFavorites();
-    else handleRemoveFromFavorites();
-  }
+  // const handleToggleFavorites = () => {
+  //   if(isSaved) handleAddToFavorites();
+  //   else handleRemoveFromFavorites();
+  // }
+
+  // const ToggleFavorites = () => {
+  //   setIsSaved(!isSaved);
+  //   console.log(isSaved);
+  // }
+
+  // Create a function that checks if pokemon name is aleady in favorites returns a boolean
+  // use that return value to set isSaved state and thus show Heart or HeartOutline
+
+  // Create a function that saved pokemon to localStorage
+
+  // Create a functin that removes pokemon from localStorage
+
 
   useEffect(() => {
     const storedData = localStorage.getItem('pokemonData');
@@ -114,6 +128,17 @@ const App = () => {
     // console.log(pokemonData);
     localStorage.setItem('pokemonData', JSON.stringify(pokemonData));
   }, [pokemonData]);
+
+  useEffect(() => {
+    console.log(isSaved);
+    const isInArray: boolean = CheckIfPokemonIsSaved(pokemonData.name);
+    setInFavorites(isInArray);
+    if(isSaved && !inFavorites){
+      SavePokemonToFavorites(pokemonData.name);
+    } else {
+      RemovePokemonFromFavorites(pokemonData.name);
+    }
+  }, [isSaved, pokemonData, inFavorites])
 
   return (
     <>
@@ -147,7 +172,7 @@ const App = () => {
             <button
             type='button'
             className='flex justify-end'
-            onClick={handleToggleFavorites}>
+            onClick={() => inFavorites}>
               <img
                 title='Add to Favorites'
                 className='h-9 w-auto items-end'

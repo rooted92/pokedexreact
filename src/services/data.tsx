@@ -54,9 +54,9 @@ const GetFlavorText = async (name: string) => {
     const data = await response.json();
     // console.log('LOCATION DATA HOPEFULLY HAS FLAVOR TEXT!');
     // console.log(data);
-    let textArr: string[] = []; 
-    data.flavor_text_entries.filter((item:any) => {
-        if(item.language.name === 'en'){
+    let textArr: string[] = [];
+    data.flavor_text_entries.filter((item: any) => {
+        if (item.language.name === 'en') {
             textArr.push(item.flavor_text);
         }
     });
@@ -82,7 +82,7 @@ const GetEvolutionChain = async (url: string) => {
     const data = await response.json();
     // console.log(data);
     return data;
-}  
+}
 
 const GetEvolutionArray = async (url: string) => {
     const response = await fetch(url);
@@ -90,19 +90,60 @@ const GetEvolutionArray = async (url: string) => {
     // console.log('EVOLUTION ARRAY');
     // console.log(data.chain.species.name);
     let evolutionArr: string[] = [data.chain.species.name];
-    if(data.chain.evolves_to.length !== 0){
+    if (data.chain.evolves_to.length !== 0) {
         // console.log(data.chain.evolves_to[0].species.name);
         data.chain.evolves_to.map((item: any) => {
             // console.log(item.species.name);
             evolutionArr.push(item.species.name);
         })
-        if(data.chain.evolves_to[0].evolves_to.length !== 0){
+        if (data.chain.evolves_to[0].evolves_to.length !== 0) {
             // console.log(data.chain.evolves_to[0].evolves_to[0].species.name);
             evolutionArr.push(data.chain.evolves_to[0].evolves_to[0].species.name);
         }
     }
     console.log(evolutionArr);
     return evolutionArr;
+}
+
+const SavePokemonToFavorites = (pokemon: string) => {
+    let favorites = GetFavorites();
+    if (!favorites.includes(pokemon)) {
+        favorites.push(pokemon);
+        console.log(favorites);
+        localStorage.setItem('Favorites', JSON.stringify(favorites));
+    }
+}
+
+const RemovePokemonFromFavorites = (pokemon: string) => {
+    let favorites = GetFavorites();
+    let pokemonIndex = favorites.indexOf(pokemon);
+    if (pokemonIndex !== -1) {
+        favorites.splice(pokemonIndex, 1);
+        console.log(favorites);
+        localStorage.setItem('Favorites', JSON.stringify(favorites));
+    }
+}
+
+const GetFavorites = () => {
+    let pokemonStorage = localStorage.getItem('Favorites');
+    try {
+        if (pokemonStorage === null) {
+          return [];
+        }
+        const favorites = JSON.parse(pokemonStorage);
+        if (!Array.isArray(favorites)) {
+          return [];
+        }
+        return favorites;
+      } catch (error) {
+        console.error('Error parsing favorites:', error);
+        return [];
+      }
+}
+
+const CheckIfPokemonIsSaved = (pokemon: string): boolean => {
+    let favorites = GetFavorites();
+    return favorites.includes(pokemon);
 }
 
 const DetermineFontColor = (type: string) => {
@@ -169,7 +210,7 @@ const DetermineFontColor = (type: string) => {
 const FormatAndCapitalize = (words: string) => {
     // console.log(words);
     let formattedStr: string;
-    if(words.includes('-')){
+    if (words.includes('-')) {
         formattedStr = words.split('-').map((word: string) => {
             return `${word.charAt(0).toUpperCase()}${word.substring(1).toLowerCase()}`;
         }).join(' ');
@@ -181,4 +222,4 @@ const FormatAndCapitalize = (words: string) => {
     return formattedStr;
 }
 
-export {GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor};  
+export { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved };  
