@@ -1,3 +1,5 @@
+import { error } from "console";
+
 const GetPokemonByNameOrId = async (input: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}/`);
     const data = await response.json();
@@ -18,49 +20,139 @@ const GetRandomPokemon = async (): Promise<any> => {
     return rndPokemonData;
 }
 
-GetRandomPokemon();
+const GetAllAbilities = async (name: string) => {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
+    const data = await response.json();
+    let abilitiesArr: string[] = [];
+    console.log(data.abilities);
+    data.abilities.map((item: any) => {
+        abilitiesArr.push(FormatAndCapitalize(item.ability.name));
+    })
+    return abilitiesArr;
+}
+
+// GetRandomPokemon();
 
 // this function will use location encounter url to pinpoint location name
-const GetEncounterURL = async (encounterURL: string) => {
-    const response = await fetch(encounterURL);
-    const data = await response.json();
-    // console.log('Data from EncounterURL Function!!');
-    // console.log(data)
-    // console.log(typeof data[0].location_area.url);
-    return data[0].location_area.url;
-}
-// GetPokemonLocationAreaURL("https://pokeapi.co/api/v2/pokemon/26/encounters");
+// const GetEncounterURL = async (encounterURL: string) => {
+//     const response = await fetch(encounterURL);
+//     const data = await response.json();
+//     // console.log('Data from EncounterURL Function!!');
+//     // console.log(data)
+//     let location: string = '';
+//     if(data.length === 0){
+//         location = 'LOCATION_UNDEFINED';
+//     }
+//     else {
+//         return data[0].location_area.url;
+//     }
+//     // console.log(data[0].location_area.url);
+//     return location;
+// }
+// GetEncounterURL("https://pokeapi.co/api/v2/pokemon/26/encounters");
 
-// this function wil use location area url from GetPokemonLocationAreaURL() function and return location name
-const GetLocationName = async (locationURL: string) => {
-    const response = await fetch(locationURL);
+const GetLocationByID = async (id: string | number) => {
+    const response = await fetch(`https://pokeapi.co/api/v2/location/${id}/`);
     const data = await response.json();
-    // console.log(data.names[0].name);
-    let location:string;
-    // if(!data.names[0].name) location = data.names[0].name;
-    // else location = 'Location Unknown';
-    data.names[0].name ? location = data.names[0].name : location = 'Location Unknow';
-    // console.log('Here is location: ', location)
-    return location;
+    console.log(FormatAndCapitalize(data.name));
+    return FormatAndCapitalize(data.name);
+}
+
+GetLocationByID(6);
+
+const GetSpritesByName = (arr: string[]) => {
+    arr.map(async (pokemon: string) => {
+        let data = await GetPokemonByNameOrId(pokemon);
+        console.log(data);
+    });
+}
+
+// this function wil use location area url from GetEncounterURL() function and return location name
+// const GetLocationName = async (locationURL: string) => {
+//     const response = await fetch(locationURL);
+//     const data = await response.json();
+//     console.log(data.names[0].name);
+//     console.log('GETLOCATION DATA');
+//     console.log(data)
+//     let location:string;
+//     // if(!data.names[0].name) location = data.names[0].name;
+//     // else location = 'Location Unknown';
+//     data.names[0].name ? location = data.names[0].name : location = 'Location Unknow';
+//     // console.log('Here is location: ', location)
+//     return location;
+// }
+
+// this function will return an array of all flavor text
+const GetFlavorText = async (name: string) => {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}/`);
+    const data = await response.json();
+    // console.log('LOCATION DATA HOPEFULLY HAS FLAVOR TEXT!');
+    // console.log(data);
+    let textArr: string[] = []; 
+    data.flavor_text_entries.filter((item:any) => {
+        if(item.language.name === 'en'){
+            textArr.push(item.flavor_text);
+        }
+    });
+    // console.log(textArr);
+    return textArr;
+}
+
+// this function will get a random number between 0 and arr.length and return the value of the randomIndex value
+const GetRandomFlavorText = (arr: string[]) => {
+    let randomIndex = Math.floor(Math.random() * arr.length) + 1;
+    return arr[randomIndex];
 }
 
 const GetSpeciesData = async (name: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}/`);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
 const GetEvolutionChain = async (url: string) => {
     const response = await fetch(url);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
+}  
+
+const GetEvolutionArray = async (url: string) => {
+    const response = await fetch(url);
+    const data = await response.json();
+    // console.log('EVOLUTION ARRAY');
+    // console.log(data.chain.species.name);
+    let evolutionArr: Array<string> = [data.chain.species.name];
+    if(data.chain.evolves_to.length !== 0){
+        // console.log(data.chain.evolves_to[0].species.name);
+        data.chain.evolves_to.map((item: any) => {
+            // console.log(item.species.name);
+            evolutionArr.push(item.species.name);
+        })
+        if(data.chain.evolves_to[0].evolves_to.length !== 0){
+            // console.log(data.chain.evolves_to[0].evolves_to[0].species.name);
+            evolutionArr.push(data.chain.evolves_to[0].evolves_to[0].species.name);
+        }
+    }
+    console.log(evolutionArr);
+    return evolutionArr;
 }
 
 // GetLocationName('https://pokeapi.co/api/v2/location-area/323/');
-const FormatAndCapitalize = () => {
-
+const FormatAndCapitalize = (words: string) => {
+    // console.log(words);
+    let formattedStr: string;
+    if(words.includes('-')){
+        formattedStr = words.split('-').map((word: string) => {
+            return `${word.charAt(0).toUpperCase()}${word.substring(1).toLowerCase()}`;
+        }).join(' ');
+        // console.log(formattedStr);
+    } else {
+        formattedStr = `${words.charAt(0).toUpperCase()}${words.substring(1).toLowerCase()}`;
+        // console.log(formattedStr);
+    }
+    return formattedStr;
 }
 
-export {GetPokemonByNameOrId, GetEncounterURL, GetLocationName, GetRandomPokemon, GetSpeciesData, GetEvolutionChain};
+export {GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities};

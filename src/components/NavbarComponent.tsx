@@ -3,34 +3,65 @@ import PokeheartImg from '../assets/heart.svg';
 import PokeballRandomizerImg from '../assets/qmark.png';
 import '../index.css';
 import { useEffect, useState } from 'react';
-import { GetPokemonByNameOrId, GetEncounterURL, GetLocationName, GetRandomPokemon, GetSpeciesData, GetEvolutionChain } from '../services/data';
+import { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetAllAbilities } from '../services/data';
 
 interface NavbarProps {
-    getPokemonData: (data: object) => void;
+    getPokemonData: (data: any) => void;
     getLocationData: (locationName: string) => void;
     getLocationForRandomData: (rndLocationName: string) => void;
-    getRandomData: (data: object) => void;
+    getRandomData: (data: any) => void;
     getMovesArray: (arr: Array<any>) => void;
+    getRandomMovesArray: (arr: any[]) => void;
+    getFunFactoid: (text: string) => void;
+    getRandomFactoids: (text: string) => void;
+    getAllAbilities: (text: string) => void;
 }
 
-const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLocationForRandomData, getMovesArray}: NavbarProps): JSX.Element => {
+const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLocationForRandomData, getMovesArray, getRandomMovesArray, getFunFactoid, getRandomFactoids, getAllAbilities}: NavbarProps): JSX.Element => {
 
     const [pokemonVal, setPokemonVal] = useState<string>('');
 
     // this function will return pokemon data object, location string
     const handleSearch = async (searchVal: string) => {
         const pokemonData = await GetPokemonByNameOrId(searchVal);
-        // console.log(pokemonData);
+        console.log(pokemonData);
+        console.log(pokemonData.location_area_encounters);
         getPokemonData(pokemonData);
-        const encounter = await GetEncounterURL(pokemonData.location_area_encounters);
-        const location = await GetLocationName(encounter);
+        // const encounter = await GetEncounterURL(pokemonData.location_area_encounters);
+        // const location = await GetLocationName(encounter);
+        const location = await GetLocationByID(pokemonData.id);
         getLocationData(location);
-        console.log(pokemonData.moves);
+        // console.log(pokemonData.moves);
         getMovesArray(pokemonData.moves);
+        // const getByName = await GetLocationByName(pokemonData.name)
+        // console.log(getByName);
         const speciesData = await GetSpeciesData(pokemonData.name);
-        console.log(speciesData.evolution_chain.url);
+        const flavorText = await GetFlavorText(pokemonData.name);
+        // console.log(flavorText);
+        const randomFlavorText =  GetRandomFlavorText(flavorText);
+        // console.log(randomFlavorText);
+        getFunFactoid(randomFlavorText);
+        // console.log(flavorText.flavor_text_entries.filter((item:any) => {
+        //     if(item.language.name === 'en'){
+        //         console.log(item.flavor_text)
+        //     }
+        // }));
+        // console.log(speciesData.evolution_chain.url);
         const evolutionData = await GetEvolutionChain(speciesData.evolution_chain.url);
-        console.log(evolutionData);
+        // const evolutionArray = await GetAllEvolutionNames(speciesData.evolution_chain.url);
+        // console.log(evolutionArray);
+        const evolutionArray = await GetEvolutionArray(speciesData.evolution_chain.url);
+        // console.log('EVOLUTION ARRAY');
+        // console.log(evolutionArray);
+        
+        // console.log(evolutionData.chain.species.name);
+        // console.log(evolutionData.chain.evolves_to.map((item: any) => console.log(item.species.name)))
+        // console.log(evolutionData.chain)
+        // console.log(evolutionData.chain.evolves_to[0].evolves_to[0].species.name)
+
+        const abilities = await GetAllAbilities(searchVal);
+        console.log(abilities.join(', '));
+        getAllAbilities(abilities.join(', '));
     }
 
     const handleRandomPokemon = async () => {
@@ -38,19 +69,22 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
         // console.log('Random DATA IN NAVBAR COMPONENT');
         // console.log(randomPokemonData);
         getRandomData(randomPokemonData);
-        return randomPokemonData.location_area_encounters;
+        getRandomMovesArray(randomPokemonData.moves);
+        const flavorText = await GetFlavorText(randomPokemonData.name);
+        const randomText = GetRandomFlavorText(flavorText);
+        getRandomFactoids(randomText);
+        return randomPokemonData.id;
         // const encounterForRndData = await GetEncounterURL(randomPokemonData.location_area_encounters);
         // const locationForRndData = await GetLocationName(encounterForRndData);
         // getLocationForRandomData(locationForRndData); 
     }
 
-    const handleRandomLocation = async (url : string) => {
-        const encounter = await GetEncounterURL(url);
-        const location = await GetLocationName(encounter);
+    const handleRandomLocation = async (id : number) => {
+        // const encounter = await GetEncounterURL(url);
+        // const location = await GetLocationName(encounter);
+        const location = await GetLocationByID(id)
         getLocationForRandomData(location);
     }
-
-
 
     // useEffect(() => {
     //     console.log('Hello');
@@ -68,9 +102,9 @@ const NavbarComponent = ({getPokemonData, getLocationData, getRandomData, getLoc
                     type='button'
                     onClick={async () => {
                         await handleRandomPokemon();
-                        let rndUrl = await handleRandomPokemon();
+                        let id = await handleRandomPokemon();
                         // console.log('Random URL WORKED IN ONCLICK: ', rndUrl);
-                        await handleRandomLocation(rndUrl);
+                        await handleRandomLocation(id);
                     }} >
                         <img className='h-9 w-9' src={PokeballRandomizerImg} alt="pokemon randomizer icon" />
                     </button>
