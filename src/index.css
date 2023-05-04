@@ -35,6 +35,10 @@ p {
   color: rgba(197, 137, 64, 1);
 }
 
+.lightBrownText {
+  color: rgba(250, 234, 177, 1);
+}
+
 .searchBar{
   width: 12.375rem;
   height: 2.1rem;
@@ -45,6 +49,23 @@ p {
   caret-color: rgba(197, 137, 64, 1);
   background-color: rgba(229, 186, 115, 1);
   border: none;
+}
+
+/* Main Cotent CCS */
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex-grow: 1;
+}
+
+hr {
+  border: solid 1px rgba(197, 137, 64, 1);
+  width: 75%;
 }
 
 /* gets rid of outline when searchbar is clicked */
@@ -136,6 +157,38 @@ input.searchBar:focus {
 .fairyType {
   color: rgb(214, 133, 173);
 }
+
+.drawer {
+  min-height: 100vh;
+  width: 22.75rem;
+  background-color: rgba(229, 186, 115, 1);
+  z-index: 2;
+  float: left;
+  position: absolute;
+}
+
+.bottomBorder {
+  border-bottom: 1px solid rgba(250, 234, 177, 1);
+}
+
+@keyframes fadeIn {
+  0%    { opacity: 0; }
+  100%   { opacity: 1; }
+}
+
+.fadeIn {
+  animation: fadeIn .2s ease-in;
+}
+
+@keyframes fadeOut {
+  0%    { opacity: 1; }
+  100%   { opacity: 0; }
+}
+
+.fadeOut {
+  animation: fadeOut .2s ease-out;
+}
+
 
 
 /* Using webkit-scrollbar to style default scrollbar. By doing this you sacrifice compatibility with browsers who do not support this psuedo element */

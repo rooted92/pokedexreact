@@ -1,218 +1,188 @@
-import './App.css';
+
 import { useEffect, useState } from 'react';
 import NavbarComponent from './components/NavbarComponent';
+import Footer from './components/FooterComponent';
 import Pawprints from './assets/pawprints.svg';
 import Heart from './assets/heart.svg';
 import HeartOutline from './assets/heartOutline.svg';
 import Location from './assets/location.svg';
 import Brain from './assets/brain.svg';
 import Pikachu from './assets/pikachu.svg';
-import { FormatAndCapitalize, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved } from './services/data';
+import { FormatAndCapitalize, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetFavorites, GetPokemonByNameOrId, GetLocationByID, GetSpritesByName, GetSpeciesData, GetEvolutionArray, GetAllMoves, GetAllAbilities, GetFlavorText, GetRandomPokemon } from './services/data';
 
 
 
 const App = () => {
   const [pokemonData, setPokemonData] = useState<any | null>({});
   const [pokemonName, setPokemonName] = useState<string>('');
+  const [pokemonId, setPokemonId] = useState<number | null>(null);
+  const [pokemonImg, setPokemonImg] = useState<string>('');
   const [type, setType] = useState<string>('');
   const [typeClass, setTypeClass] = useState<string>('');
   const [isSaved, setIsSaved] = useState<boolean>(false);
-  const [inFavorites, setInFavorites] = useState<boolean>(false); 
   const [location, setLocation] = useState<string>('');
   const [movesArray, setMovesArray] = useState<string>('');
   const [funFactoids, setFunFactoids] = useState<string>('');
   const [abilities, setAbilities] = useState<string>('');
   const [sprites, setSprites] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>('');
 
-  const handlePokemonData = async (data: any) => {
-    setPokemonData(data);
+  const handleSearchValue = async (pokemonValue: string) => {
+    setIsLoading(true);
+    setSearchValue(pokemonValue);
+    // console.log(pokemonValue);
+    let data = await GetPokemonByNameOrId(pokemonValue);
+    // console.log(data);
     setPokemonName(data.name);
-    setType(data?.types?.[0]?.type?.name);
-  }
-
-  const handleLocation = async (url: string) => {
-    setLocation(url);
-  }
-
-  const handleRandomPokemonGenerator = async (data: any) => {
-    setPokemonData(data);
-    setPokemonName(data.name);
-    let fontColor = DetermineFontColor(data?.types?.[0]?.type?.name)
-    console.log(fontColor);
+    setPokemonId(data.id);
+    setPokemonImg(data.sprites?.other.dream_world.front_default);
+    setType(data.types[0].type.name);
+    let fontColor = DetermineFontColor(data.types[0].type.name);
     setTypeClass(fontColor);
-    console.log(typeClass);
-    setType(data?.types?.[0]?.type?.name);
+    setLocation(await GetLocationByID(data.id));
+    let speciesData = await GetSpeciesData(data.name);
+    let evolutionArr = await GetEvolutionArray(speciesData.evolution_chain.url);
+    let evolutionSprites = await GetSpritesByName(evolutionArr);
+    // console.log(evolutionSprites);
+    setSprites(evolutionSprites);
+    // console.log(sprites);
+    // console.log(evolutionArr);
+    // console.log(speciesData);
+    setMovesArray(await GetAllMoves(data.name));
+    setAbilities(await GetAllAbilities(data.name));
+    setFunFactoids(await GetFlavorText(data.name));
+    setIsLoading(false);
   }
 
-  const handleLocationForRandomPokemon = (url: string) => {
-    setLocation(url);
+  const handleRandomPokemon = async () => {
+    setIsLoading(true);
+    let data = await GetRandomPokemon();
+    // console.log(data);
+    setPokemonName(data.name);
+    setPokemonId(data.id);
+    setPokemonImg(data.sprites?.other.dream_world.front_default);
+    setType(data.types[0].type.name);
+    let fontColor = DetermineFontColor(data.types[0].type.name);
+    setTypeClass(fontColor);
+    setLocation(await GetLocationByID(data.id));
+    let speciesData = await GetSpeciesData(data.name);
+    let evolutionArr = await GetEvolutionArray(speciesData.evolution_chain.url);
+    let evolutionSprites = await GetSpritesByName(evolutionArr);
+    // console.log(evolutionSprites);
+    setSprites(evolutionSprites);
+    // console.log(sprites);
+    // console.log(evolutionArr);
+    // console.log(speciesData);
+    setMovesArray(await GetAllMoves(data.name));
+    setAbilities(await GetAllAbilities(data.name));
+    setFunFactoids(await GetFlavorText(data.name));
+    setIsLoading(false);
   }
-
-  const handleMovesArray = (movesArr: Array<any>) => {
-    // console.log('Moves Array Right Here vvv');
-    let movesArray: Array<string> = movesArr.map(moves => {
-      return FormatAndCapitalize(moves.move.name);
-    });
-    setMovesArray(movesArray.join(', '));   
-  }
-
-  const handleRandomMovesArray = (movesArr: any[]) => {
-    let movesArray: string[] = movesArr.map(moves => {
-      return FormatAndCapitalize(moves.move.name);
-    })
-    setMovesArray(movesArray.join(', '));
-  }
-
-  const handleFunFactoid = (text: string) => {
-    setFunFactoids(text);
-  }
-
-  const handleRandomFactoids = (text: string) => {
-    setFunFactoids(text);
-  }
-
-  const handleAbilities = (text: string) => {
-    setAbilities(text);
-  }
-
-  const handleRandomAbilities = (text: string) => {
-    setAbilities(text);
-  }
-
-  const handleSprites = (arr: string[]) => {
-    setSprites(arr);
-  }
-
-  const handleRandomSprites = (arr: string[]) => {
-    setSprites(arr);
-  }
-
-  // const handleAddToFavorites = () => {
-  //   SavePokemonToFavorites(pokemonData.name);
-  //   setIsSaved(true);
-  //   console.log(isSaved);
-  // }
-
-  // const handleRemoveFromFavorites = () => {
-  //   RemovePokemonFromFavorites(pokemonData.name);
-  //   setIsSaved(false);
-  //   console.log(isSaved);
-  // }
-
-  // const handleToggleFavorites = () => {
-  //   if(isSaved) handleAddToFavorites();
-  //   else handleRemoveFromFavorites();
-  // }
-
-  // const ToggleFavorites = () => {
-  //   setIsSaved(!isSaved);
-  //   console.log(isSaved);
-  // }
-
-  // Create a function that checks if pokemon name is aleady in favorites returns a boolean
-  // use that return value to set isSaved state and thus show Heart or HeartOutline
-
-  // Create a function that saved pokemon to localStorage
-
-  // Create a functin that removes pokemon from localStorage
-
 
   useEffect(() => {
-    const storedData = localStorage.getItem('pokemonData');
-    const parsedData = storedData ? JSON.parse(storedData) : null;
-    setPokemonData(parsedData);
+    handleRandomPokemon();
   }, []);
 
-  // console.log(pokemonData);
-  useEffect(() => {
-    // console.log(pokemonData);
-    localStorage.setItem('pokemonData', JSON.stringify(pokemonData));
-  }, [pokemonData]);
+  const handleAddToFavorites = () => {
+    SavePokemonToFavorites(pokemonName);
+  }
+
+  const handleRemoveFromFavorites = () => {
+    RemovePokemonFromFavorites(pokemonName);
+  }
 
   useEffect(() => {
-    console.log(isSaved);
-    const isInArray: boolean = CheckIfPokemonIsSaved(pokemonData.name);
-    setInFavorites(isInArray);
-    if(isSaved && !inFavorites){
-      SavePokemonToFavorites(pokemonData.name);
+    if (isSaved) {
+      handleAddToFavorites();
     } else {
-      RemovePokemonFromFavorites(pokemonData.name);
+      handleRemoveFromFavorites();
     }
-  }, [isSaved, pokemonData, inFavorites])
+  }, [isSaved]);
+
+  useEffect(() => {
+    let favorited = CheckIfPokemonIsSaved(pokemonName);
+    if (favorited) {
+      setIsSaved(true);
+    } else {
+      setIsSaved(false);
+    }
+  }, [pokemonName]);
 
   return (
     <>
-      <NavbarComponent
-        getPokemonData={handlePokemonData}
-        getLocationData={handleLocation}
-        getRandomData={handleRandomPokemonGenerator}
-        getLocationForRandomData={handleLocationForRandomPokemon}
-        getMovesArray={handleMovesArray}
-        getRandomMovesArray={handleRandomMovesArray}
-        getFunFactoid={handleFunFactoid}
-        getRandomFactoids={handleRandomFactoids}
-        getAllAbilities={handleAbilities}
-        getRandomAbilities={handleRandomAbilities}
-        getSprites={handleSprites}
-        getRandomSprites={handleRandomSprites} />
-      <div className="grid grid-cols-3 mx-32 xl:gap-20 lg:gap-16 items-start mb-8">
-        {/* First columns */}
-        <div>
-          <div className='grid grid-cols-2 mb-5'>
-            <p className='italic headers'>{FormatAndCapitalize(pokemonName)}</p>
-            <p className='text-end font-bold headers'>{pokemonData.id}</p>
-          </div>
-          <div className='flex flex-col justify-center'>
-            <img className='h-60 w-auto' src={pokemonData?.sprites?.other?.dream_world?.front_default} alt="temp-img" />
-
-          </div>
-          <div className='grid grid-cols-7 mt-5 gap-4'>
-            <p className={typeClass}>{FormatAndCapitalize(type)}</p>
-            <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
-            <button
-            type='button'
-            className='flex justify-end'
-            onClick={() => inFavorites}>
-              <img
-                title='Add to Favorites'
-                className='h-9 w-auto items-end'
-                src={isSaved? Heart : HeartOutline}
-                alt="Favorites Icon" />
-            </button>
-          </div>
+      <div className='pageContainer'>
+        <div className="mainContent">
+          <NavbarComponent
+            getPokemonFromFavorite={handleSearchValue}
+            getRandomPokemon={handleRandomPokemon}
+            getSearchValue={handleSearchValue} />
+          {
+            isLoading
+              ? <div className='grid grid-cols-1 justify-items-center'>
+                <div className='flex flex-row animate-pulse'>
+                  <p className='tracking-wider self-end'>Loading</p>
+                  <img className='mt-5 h-40 w-auto' src={Pikachu} alt="loading icon" />
+                </div>
+              </div>
+              : <div className="grid grid-cols-3 mx-32 xl:gap-20 lg:gap-16 items-start mb-8">
+                {/* First columns */}
+                <div>
+                  <div className='grid grid-cols-2 mb-5'>
+                    <p className='italic headers'>{FormatAndCapitalize(pokemonName)}</p>
+                    <p className='text-end font-bold headers'>{pokemonId}</p>
+                  </div>
+                  <div className='flex flex-col justify-center'>
+                    <img className='h-60 w-auto fadeIn' src={pokemonImg} alt="temp-img" />
+                  </div>
+                  <div className='grid grid-cols-7 mt-5 gap-4'>
+                    <p className={typeClass}>{FormatAndCapitalize(type)}</p>
+                    <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
+                    <button
+                      type='button'
+                      className='flex justify-end'
+                      onClick={() => setIsSaved(!isSaved)}>
+                      <img
+                        title='Add to Favorites'
+                        className='h-9 w-auto items-end hover:scale-125'
+                        src={isSaved ? Heart : HeartOutline}
+                        alt="Favorites Icon" />
+                    </button>
+                  </div>
+                </div>
+                {/* Second Column */}
+                <div className=''>
+                  <p className='headers'>Evolutions</p>
+                  <div className='grid grid-cols-6 mt-7'>
+                    <img className='col-span-1 h-12 w-auto flex justify-end self-center' src={Pawprints} alt="Footprints" />
+                    <div className='flex col-span-5 overflow-x-scroll gap-9 ml-9 pb-1'>
+                      {
+                        sprites.map((url: string, index: number) => {
+                          // console.log(url, index);
+                          return (
+                            <>
+                              <img key={index} className='max-h-20 w-auto' src={url} alt="sprite" />
+                            </>
+                          );
+                        })
+                      }
+                    </div>
+                  </div>
+                  <p className='headers mt-6 row-span-6'>Moves</p>
+                  <p className='overflow-auto h-32'>{movesArray}</p>
+                </div>
+                {/* Third Column */}
+                <div className=''>
+                  <img src="" alt="" />
+                  <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
+                  <p className='mt-7'>{funFactoids}</p>
+                  <p className='headers mt-6'>Abilities</p>
+                  <p>{abilities}</p>
+                </div>
+              </div>
+          }
         </div>
-        {/* Second Column */}
-        <div className=''>
-          <p className='headers'>Evolutions</p>
-          <div className='grid grid-cols-6 mt-7'>
-            <img className='col-span-1 h-12 w-auto flex justify-end self-center' src={Pawprints} alt="Footprints" />
-            <div className='flex col-span-5 overflow-x-scroll gap-9 ml-9 pb-1'>
-              {
-                sprites.length === 0
-                  ? <>
-                    <p>Image not found</p>
-                  </>
-                  : sprites.map((url: string, index: number) => {
-                    return (
-                      <>
-                        <img className='max-h-20 w-auto' src={url} alt="sprite" />
-                      </>
-                    );
-                  })
-              }
-            </div>
-          </div>
-          <p className='headers mt-6 row-span-6'>Moves</p>
-          <p className='overflow-auto h-32'>{movesArray}</p>
-        </div>
-        {/* Third Column */}
-        <div className=''>
-          <img src="" alt="" />
-          <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
-          <p className='mt-7'>{funFactoids}</p>
-          <p className='headers mt-6'>Abilities</p>
-          <p>{abilities}</p>
-        </div>
+        <Footer />
       </div>
     </>
   );

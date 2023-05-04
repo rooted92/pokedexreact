@@ -1,7 +1,7 @@
 const GetPokemonByNameOrId = async (input: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
@@ -22,27 +22,37 @@ const GetAllAbilities = async (name: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
     const data = await response.json();
     let abilitiesArr: string[] = [];
-    console.log(data.abilities);
+    // console.log(data.abilities);
     data.abilities.map((item: any) => {
         abilitiesArr.push(FormatAndCapitalize(item.ability.name));
     })
-    return abilitiesArr;
+    return abilitiesArr.join(', ');
+}
+
+const GetAllMoves = async (name: string) => {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
+    const data = await response.json();
+    let movesArray: string[] = [];
+    data.moves.map((item: any) => {
+        movesArray.push(FormatAndCapitalize(item.move.name))
+    })
+    return movesArray.join(', ');
 }
 
 const GetLocationByID = async (id: string | number) => {
     const response = await fetch(`https://pokeapi.co/api/v2/location/${id}/`);
     const data = await response.json();
-    console.log(FormatAndCapitalize(data.name));
+    // console.log(FormatAndCapitalize(data.name));
     return FormatAndCapitalize(data.name);
 }
 
-GetLocationByID(6);
+// GetLocationByID(6);
 
-const GetSpritesByName = (arr: string[]) => {
+const GetSpritesByName = async (arr: string[]) => {
     let urlArr: string[] = [];
     arr.map(async (pokemon: string) => {
         let data = await GetPokemonByNameOrId(pokemon);
-        console.log(data.sprites.other.dream_world.front_default);
+        // console.log(data.sprites.other.dream_world.front_default);
         urlArr.push(data.sprites.other.dream_world.front_default);
     });
     return urlArr;
@@ -61,7 +71,9 @@ const GetFlavorText = async (name: string) => {
         }
     });
     // console.log(textArr);
-    return textArr;
+    let randomText = Math.floor(Math.random() * textArr.length);
+    // console.log(textArr[randomText]);
+    return textArr[randomText];
 }
 
 // this function will get a random number between 0 and arr.length and return the value of the randomIndex value
@@ -101,7 +113,7 @@ const GetEvolutionArray = async (url: string) => {
             evolutionArr.push(data.chain.evolves_to[0].evolves_to[0].species.name);
         }
     }
-    console.log(evolutionArr);
+    // console.log(evolutionArr);
     return evolutionArr;
 }
 
@@ -109,7 +121,7 @@ const SavePokemonToFavorites = (pokemon: string) => {
     let favorites = GetFavorites();
     if (!favorites.includes(pokemon)) {
         favorites.push(pokemon);
-        console.log(favorites);
+        // console.log(favorites);
         localStorage.setItem('Favorites', JSON.stringify(favorites));
     }
 }
@@ -119,7 +131,7 @@ const RemovePokemonFromFavorites = (pokemon: string) => {
     let pokemonIndex = favorites.indexOf(pokemon);
     if (pokemonIndex !== -1) {
         favorites.splice(pokemonIndex, 1);
-        console.log(favorites);
+        // console.log(favorites);
         localStorage.setItem('Favorites', JSON.stringify(favorites));
     }
 }
@@ -143,6 +155,7 @@ const GetFavorites = () => {
 
 const CheckIfPokemonIsSaved = (pokemon: string): boolean => {
     let favorites = GetFavorites();
+    // console.log(favorites);
     return favorites.includes(pokemon);
 }
 
@@ -222,4 +235,4 @@ const FormatAndCapitalize = (words: string) => {
     return formattedStr;
 }
 
-export { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved };  
+export { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetFavorites, GetAllMoves };  
