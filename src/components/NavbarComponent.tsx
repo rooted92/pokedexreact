@@ -5,6 +5,7 @@ import Close from '../assets/cross.svg';
 import '../index.css';
 import { useEffect, useState } from 'react';
 import { GetPokemonByNameOrId, GetFavorites, FormatAndCapitalize } from '../services/data';
+import PokemonItem from './PokemonItemComponent';
 
 interface NavbarProps {
     getPokemonFromFavorite: (name: string) => void;
@@ -70,17 +71,16 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                 </div>
                 <div className='grid grid-cols-3 gap-1 mt-3 p-5 overflow-y-scroll h-96'>
                     {favorites.map((pokemon: any, index: number) => {
+                        const pokeSprite: string = pokemon.sprites?.front_default;
                         return (
                             <div className='bottomBorder m-1 flex flex-col p-1 text-xs' key={index}>
                                 {pokemon && (
                                     <>
-                                        <img className='hover:animate-bounce' src={pokemon.sprites?.front_default} alt={`${pokemon.name} sprite`} />
-                                        <button
-                                            className='brownFont quattroFont capitalize truncate hover:scale-150'
-                                            onClick={() => getPokemonFromFavorite(FormatAndCapitalize(pokemon.name))}
-                                            key={index}>
-                                            {`${pokemon.name}`}
-                                        </button>
+                                        <PokemonItem
+                                            pokemonName={`${pokemon.name}`}
+                                            spriteUrl={pokeSprite}
+                                            index={index}
+                                            getPokemonFavoriteFromNavProp={() => getPokemonFromFavorite(pokemon.name)} />
                                     </>
                                 )}
                             </div>
