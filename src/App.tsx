@@ -112,11 +112,12 @@ const App = () => {
   return (
     <>
       <div className='pageContainer'>
-        <div className="mainContent">
-          <NavbarComponent
+        <NavbarComponent
             getPokemonFromFavorite={handleSearchValue}
             getRandomPokemon={handleRandomPokemon}
             getSearchValue={handleSearchValue} />
+        <div className="mainContent container mx-auto">
+          
           {
             isLoading
               ? <div className='grid grid-cols-1 justify-items-center'>
