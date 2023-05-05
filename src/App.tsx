@@ -161,7 +161,7 @@ const App = () => {
                           // console.log(url, index);
                           return (
                             <>
-                              <img key={index} className='max-h-20 w-auto' src={url} alt="sprite" />
+                              <img key={index} className='max-h-20 w-auto' src={url} alt="pokemon sprite" />
                             </>
                           );
                         })
