@@ -1,6 +1,3 @@
-import React from 'react';
-import { GetPokemonByNameOrId } from '../services/data';
-
 interface PokemonItemProps {
     pokemonName: string;
     spriteUrl: string;
@@ -8,7 +5,7 @@ interface PokemonItemProps {
     getPokemonFavoriteFromNavProp: () => void;
 }
 
-const PokemonItem = ({ pokemonName, index, getPokemonFavoriteFromNavProp, spriteUrl }: PokemonItemProps) => {
+const PokemonItem = ({ pokemonName, index, getPokemonFavoriteFromNavProp, spriteUrl }: PokemonItemProps): JSX.Element => {
 
     return (
         <>

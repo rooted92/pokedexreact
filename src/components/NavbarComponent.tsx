@@ -122,11 +122,14 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                                 // getSearchValue(e.target.value);
                             }}
                             onKeyDown={async e => {
-                                if (e.key === 'Enter') {
+                                if (e.key === 'Enter' && pokemonVal) {
                                     // console.log('Enter pressed!!');
                                     // console.log(pokemonVal);
                                     // await handleSearch(pokemonVal.toLowerCase());
                                     getSearchValue(pokemonVal.toLowerCase());
+                                }
+                                else {
+                                    alert('Please enter pokemon name or ID in the input field.');
                                 }
                             }}
                         />
