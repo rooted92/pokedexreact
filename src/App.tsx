@@ -173,7 +173,6 @@ const App = () => {
                 </div>
                 {/* Third Column */}
                 <div className=''>
-                  <img src="" alt="" />
                   <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
                   <p className='mt-7'>{funFactoids}</p>
                   <p className='headers mt-6'>Abilities</p>
