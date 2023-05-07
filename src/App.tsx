@@ -10,12 +10,11 @@ import Brain from './assets/brain.svg';
 import Pikachu from './assets/pikachu.svg';
 import SnorlaxAvatar from './assets/snorlaxError.svg';
 import ErrorIcon from './assets/error-404.svg';
-import { FormatAndCapitalize, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetFavorites, GetPokemonByNameOrId, GetLocationByID, GetSpritesByName, GetSpeciesData, GetEvolutionArray, GetAllMoves, GetAllAbilities, GetFlavorText, GetRandomPokemon } from './services/data';
+import { FormatAndCapitalize, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetPokemonByNameOrId, GetLocationByID, GetSpritesByName, GetSpeciesData, GetEvolutionArray, GetAllMoves, GetAllAbilities, GetFlavorText, GetRandomPokemon } from './services/data';
 
 
 
 const App = () => {
-  const [pokemonData, setPokemonData] = useState<any | null>({});
   const [pokemonName, setPokemonName] = useState<string>('');
   const [pokemonId, setPokemonId] = useState<number | null>(null);
   const [pokemonImg, setPokemonImg] = useState<string>('');
@@ -33,7 +32,6 @@ const App = () => {
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
 
   const handleSearchValue = async (pokemonValue: string) => {
-    // setIsLoading(true);
     setSearchValue(pokemonValue);
     // console.log(pokemonValue);
     let data = await GetPokemonByNameOrId(pokemonValue);

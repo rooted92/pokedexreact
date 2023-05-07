@@ -1,37 +1,3 @@
-// const FindPokemonInResultsArray = async (searchVal: string) => {
-//     const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=648&offset=0');
-//     const data = await response.json();
-//     const name = await ValidateSearchByPokemonId(searchVal);
-//     console.log(name);
-//     console.log('Here is the data');
-//     console.log(data.results.some(async (pokemon: any) => {
-//         return pokemon.name || name === searchVal;
-//     }))
-//     console.log(data);
-//     let isValid: boolean = data.results.some((pokemon: any) => {
-//         return pokemon || name === searchVal;
-//     });
-
-//     console.log(isValid);
-//     return isValid;
-// }
-
-// const ValidateSearchByPokemonId = async (input: string) => {
-//     try {
-//         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
-//         if (!response.ok) {
-//             return false;
-//         }
-//         const data = await response.json();
-//         console.log(data);
-//         return data.name === input.toLowerCase();
-//     }
-//     catch (error) {
-//         console.warn(error);
-//         return false;
-//     }
-// }
-
 const GetPokemonByNameOrId = async (input: string) => {
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
@@ -96,8 +62,6 @@ const GetLocationByID = async (id: string | number) => {
     return FormatAndCapitalize(data.name);
 }
 
-// GetLocationByID(6);
-
 const GetSpritesByName = async (arr: string[]) => {
     let urlArr: string[] = [];
     arr.map(async (pokemon: string) => {
@@ -112,7 +76,6 @@ const GetSpritesByName = async (arr: string[]) => {
 const GetFlavorText = async (name: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}/`);
     const data = await response.json();
-    // console.log('LOCATION DATA HOPEFULLY HAS FLAVOR TEXT!');
     // console.log(data);
     let textArr: string[] = [];
     data.flavor_text_entries.filter((item: any) => {
@@ -149,7 +112,6 @@ const GetEvolutionChain = async (url: string) => {
 const GetEvolutionArray = async (url: string) => {
     const response = await fetch(url);
     const data = await response.json();
-    // console.log('EVOLUTION ARRAY');
     // console.log(data.chain.species.name);
     let evolutionArr: string[] = [data.chain.species.name];
     if (data.chain.evolves_to.length !== 0) {
