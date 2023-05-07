@@ -6,7 +6,7 @@ import '../index.css';
 const Footer = (): JSX.Element => {
     return (
         <>
-            <div className="container mx-auto mb-4 mt-96 flex space-x-3 brownFont quattroFont justify-center">
+            <div className="container mx-auto mb-4 mt-20 flex space-x-3 brownFont quattroFont justify-center">
                 <div>Designed and Developed by Pedro Castaneda</div>
                 <div>|<span className='mx-2'><a href="https://pedroc.dev/">Portfolio</a></span>|</div>
                 <div className='flex flex-row justify-start gap-3'>

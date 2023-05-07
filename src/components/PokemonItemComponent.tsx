@@ -9,9 +9,9 @@ const PokemonItem = ({ pokemonName, index, getPokemonFavoriteFromNavProp, sprite
 
     return (
         <>
-            <img className='hover:animate-bounce' src={spriteUrl} alt={`${pokemonName} sprite`} />
+            <img src={spriteUrl} alt={`${pokemonName} sprite`} />
             <button
-                className='brownFont quattroFont capitalize truncate hover:scale-150'
+                className='brownFont text-center quattroFont capitalize truncate hover:scale-125'
                 onClick={getPokemonFavoriteFromNavProp}
                 key={index}>
                 {`${pokemonName}`}

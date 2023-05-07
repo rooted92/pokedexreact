@@ -8,6 +8,8 @@ import HeartOutline from './assets/heartOutline.svg';
 import Location from './assets/location.svg';
 import Brain from './assets/brain.svg';
 import Pikachu from './assets/pikachu.svg';
+import SnorlaxAvatar from './assets/snorlaxError.svg';
+import ErrorIcon from './assets/error-404.svg';
 import { FormatAndCapitalize, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetFavorites, GetPokemonByNameOrId, GetLocationByID, GetSpritesByName, GetSpeciesData, GetEvolutionArray, GetAllMoves, GetAllAbilities, GetFlavorText, GetRandomPokemon } from './services/data';
 
 
@@ -27,13 +29,26 @@ const App = () => {
   const [sprites, setSprites] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [userError, setUserError] = useState<boolean>(false);
+  const [isNotFound, setIsNotFound] = useState<boolean>(false);
 
   const handleSearchValue = async (pokemonValue: string) => {
-    setIsLoading(true);
+    // setIsLoading(true);
     setSearchValue(pokemonValue);
     // console.log(pokemonValue);
     let data = await GetPokemonByNameOrId(pokemonValue);
-    // console.log(data);
+    console.log(data);
+    if (!data) {
+      setUserError(true);
+      return;
+    } else if (data === 'Not Found') {
+      console.log(data);
+      setIsNotFound(true);
+    }
+    else {
+      setUserError(false);
+    }
+    setIsLoading(true);
     setPokemonName(data.name);
     setPokemonId(data.id);
     setPokemonImg(data.sprites?.other.dream_world.front_default);
@@ -113,73 +128,87 @@ const App = () => {
     <>
       <div className='pageContainer'>
         <NavbarComponent
-            getPokemonFromFavorite={handleSearchValue}
-            getRandomPokemon={handleRandomPokemon}
-            getSearchValue={handleSearchValue} />
+          getPokemonFromFavorite={handleSearchValue}
+          getRandomPokemon={handleRandomPokemon}
+          getSearchValue={handleSearchValue}
+          errMessage={userError} />
         <div className="mainContent container mx-auto">
-          
+
           {
             isLoading
-              ? <div className='grid grid-cols-1 justify-items-center'>
+              ? (<div className='grid grid-cols-1 justify-items-center'>
                 <div className='flex flex-row animate-pulse'>
                   <p className='tracking-wider self-end'>Loading</p>
                   <img className='mt-5 h-40 w-auto' src={Pikachu} alt="loading icon" />
                 </div>
-              </div>
-              : <div className="grid grid-cols-3 mx-32 xl:gap-20 lg:gap-16 items-start mb-8">
-                {/* First columns */}
-                <div>
-                  <div className='grid grid-cols-2 mb-5'>
-                    <p className='italic headers'>{FormatAndCapitalize(pokemonName)}</p>
-                    <p className='text-end font-bold headers'>{pokemonId}</p>
-                  </div>
-                  <div className='flex flex-col justify-center'>
-                    <img className='h-60 w-auto fadeIn' src={pokemonImg} alt="temp-img" />
-                  </div>
-                  <div className='grid grid-cols-7 mt-5 gap-4'>
-                    <p className={typeClass}>{FormatAndCapitalize(type)}</p>
-                    <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
-                    <button
-                      type='button'
-                      className='flex justify-end'
-                      onClick={() => setIsSaved(!isSaved)}>
-                      <img
-                        title='Add to Favorites'
-                        className='h-9 w-auto items-end hover:scale-125'
-                        src={isSaved ? Heart : HeartOutline}
-                        alt="Favorites Icon" />
-                    </button>
+              </div>)
+              : isNotFound ?
+                <div className='grid grid-cols-1 justify-items-center'>
+                  <div className='flex flex-row'>
+                    <img className='mt-5 h-40 w-auto' src={ErrorIcon} alt="loading icon" />
+                    <img className='mt-5 h-40 w-auto' src={SnorlaxAvatar} alt="loading icon" />
+                    <p className='text text-rose-500 self-end'>Pokemon not found...</p>
                   </div>
                 </div>
-                {/* Second Column */}
-                <div className=''>
-                  <p className='headers'>Evolutions</p>
-                  <div className='grid grid-cols-6 mt-7'>
-                    <img className='col-span-1 h-12 w-auto flex justify-end self-center' src={Pawprints} alt="Footprints" />
-                    <div className='flex col-span-5 overflow-x-scroll gap-9 ml-9 pb-1'>
-                      {
-                        sprites.map((url: string, index: number) => {
-                          // console.log(url, index);
-                          return (
-                            <>
-                              <img key={index} className='max-h-20 w-auto' src={url} alt="pokemon sprite" />
-                            </>
-                          );
-                        })
-                      }
+                :
+                <div className="grid xl:grid-cols-3 lg:grid-cols-2 mx-32 xl:gap-20 lg:gap-16 items-start mb-8">
+                  {/* First columns */}
+                  <div>
+                    <div className='grid grid-cols-2 mb-5'>
+                      <p className='italic headers'>{FormatAndCapitalize(pokemonName)}</p>
+                      <p className='text-end font-bold headers'>{pokemonId}</p>
+                    </div>
+                    <div className='flex flex-col justify-center'>
+                      <img className='h-60 w-auto fadeIn' src={pokemonImg} alt="temp-img" />
+                    </div>
+                    <div className='grid grid-cols-7 mt-5 gap-4'>
+                      <p className={typeClass}>{FormatAndCapitalize(type)}</p>
+                      <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
+                      <button
+                        type='button'
+                        className='flex justify-end'
+                        onClick={() => setIsSaved(!isSaved)}>
+                        <img
+                          title='Add to Favorites'
+                          className='h-9 w-auto items-end hover:scale-125'
+                          src={isSaved ? Heart : HeartOutline}
+                          alt="Favorites Icon" />
+                      </button>
                     </div>
                   </div>
-                  <p className='headers mt-6 row-span-6'>Moves</p>
-                  <p className='overflow-auto h-32'>{movesArray}</p>
+                  {/* Second Column */}
+                  <div className=''>
+                    <p className='headers'>Evolutions</p>
+                    <div className='grid grid-cols-6 mt-7'>
+                      <img className='col-span-1 h-12 w-auto flex justify-end self-center' src={Pawprints} alt="Footprints" />
+                      <div className='flex col-span-5 overflow-x-scroll gap-9 ml-9 pb-1'>
+                        {
+                          sprites.map((url: string, index: number) => {
+                            // console.log(url, index);
+                            return (
+                              <>
+                                <img key={index} className='max-h-20 w-auto' src={url} alt="pokemon sprite" />
+                              </>
+                            );
+                          })
+                        }
+                      </div>
+                    </div>
+                    <p className='headers mt-6 row-span-6'>Moves</p>
+                    <p className='overflow-auto h-32'>{movesArray}</p>
+                  </div>
+                  {/* Third Column */}
+                  <div className='lg:grid lg:grid-span-3 lg:grid-flow-col lg:gap-96 xl:flex xl:flex-col'>
+                    <div className='w-full'>
+                      <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
+                      <p className='mt-7 lg:inline'>{funFactoids}</p>
+                    </div>
+                    <div className='w-3/4'>
+                      <p className='headers mt-6'>Abilities</p>
+                      <p>{abilities}</p>
+                    </div>
+                  </div>
                 </div>
-                {/* Third Column */}
-                <div className=''>
-                  <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
-                  <p className='mt-7'>{funFactoids}</p>
-                  <p className='headers mt-6'>Abilities</p>
-                  <p>{abilities}</p>
-                </div>
-              </div>
           }
         </div>
         <Footer />

@@ -1,8 +1,58 @@
+// const FindPokemonInResultsArray = async (searchVal: string) => {
+//     const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=648&offset=0');
+//     const data = await response.json();
+//     const name = await ValidateSearchByPokemonId(searchVal);
+//     console.log(name);
+//     console.log('Here is the data');
+//     console.log(data.results.some(async (pokemon: any) => {
+//         return pokemon.name || name === searchVal;
+//     }))
+//     console.log(data);
+//     let isValid: boolean = data.results.some((pokemon: any) => {
+//         return pokemon || name === searchVal;
+//     });
+
+//     console.log(isValid);
+//     return isValid;
+// }
+
+// const ValidateSearchByPokemonId = async (input: string) => {
+//     try {
+//         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
+//         if (!response.ok) {
+//             return false;
+//         }
+//         const data = await response.json();
+//         console.log(data);
+//         return data.name === input.toLowerCase();
+//     }
+//     catch (error) {
+//         console.warn(error);
+//         return false;
+//     }
+// }
+
 const GetPokemonByNameOrId = async (input: string) => {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
-    const data = await response.json();
-    // console.log(data);
-    return data;
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
+        if(!response.ok){
+            return false;
+        }
+        const data = await response.json();
+        // console.log(data);
+        return data;
+    } catch (error) {
+        console.warn(error);
+        return false;
+    }
+
+}
+
+const GetPokemonDataForFavorites = async (input: string) => {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${input.toLowerCase()}/`);
+        const data = await response.json();
+        // console.log(data);
+        return data;
 }
 
 // this function will generate a random number based on total lenght of pokemon array to retrieve random pokemon data
@@ -140,17 +190,17 @@ const GetFavorites = () => {
     let pokemonStorage = localStorage.getItem('Favorites');
     try {
         if (pokemonStorage === null) {
-          return [];
+            return [];
         }
         const favorites = JSON.parse(pokemonStorage);
         if (!Array.isArray(favorites)) {
-          return [];
+            return [];
         }
         return favorites;
-      } catch (error) {
+    } catch (error) {
         console.error('Error parsing favorites:', error);
         return [];
-      }
+    }
 }
 
 const CheckIfPokemonIsSaved = (pokemon: string): boolean => {
@@ -235,4 +285,4 @@ const FormatAndCapitalize = (words: string) => {
     return formattedStr;
 }
 
-export { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetFavorites, GetAllMoves };  
+export { GetPokemonByNameOrId, GetRandomPokemon, GetSpeciesData, GetEvolutionChain, GetEvolutionArray, FormatAndCapitalize, GetFlavorText, GetRandomFlavorText, GetLocationByID, GetSpritesByName, GetAllAbilities, DetermineFontColor, SavePokemonToFavorites, RemovePokemonFromFavorites, CheckIfPokemonIsSaved, GetFavorites, GetAllMoves, GetPokemonDataForFavorites };  

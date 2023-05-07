@@ -4,16 +4,18 @@ import PokeballRandomizerImg from '../assets/qmark.png';
 import Close from '../assets/cross.svg';
 import '../index.css';
 import { useEffect, useState } from 'react';
-import { GetPokemonByNameOrId, GetFavorites, FormatAndCapitalize } from '../services/data';
+import { GetPokemonByNameOrId, GetFavorites } from '../services/data';
 import PokemonItem from './PokemonItemComponent';
+import { GetPokemonDataForFavorites } from '../services/data';
 
 interface NavbarProps {
     getPokemonFromFavorite: (name: string) => void;
     getRandomPokemon: () => void;
     getSearchValue: (pokemonValue: string) => void;
+    errMessage: boolean;
 }
 
-const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavorite }: NavbarProps): JSX.Element => {
+const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavorite, errMessage }: NavbarProps): JSX.Element => {
 
     const [pokemonVal, setPokemonVal] = useState<string>('');
     const [show, setShow] = useState<boolean>(false);
@@ -36,58 +38,60 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
     }, [show])
 
     useEffect(() => {
-        const fetchData = async () => {
+        const FetchData = async () => {
             const getPokemonData = async (pokemonName: string) => {
-                const data = await GetPokemonByNameOrId(pokemonName);
+                const data = await GetPokemonDataForFavorites(pokemonName);
                 return data;
             }
-            const fetchDataForFavorites = async () => {
+            const FetchDataForFavorites = async () => {
                 const favoritesData = await Promise.all(
                     favorites.map(async (pokemon: string) => {
                         const data = await getPokemonData(pokemon);
                         return data;
                     })
                 );
+                // console.log(favoritesData);
                 setFavorites(favoritesData);
             }
 
-            fetchDataForFavorites();
+            FetchDataForFavorites();
         }
 
-        fetchData();
+        FetchData();
     }, [favorites]);
 
     return (
         <>
-            {show && <div className='drawer fadeIn rounded-md'>
-                <div className='grid grid-cols-1 justify-items-end'>
-                    <button onClick={handleClose} className='m-5' type='button'>
-                        <img className='h-9 w-auto' src={Close} alt="close icon" />
-                    </button>
-                </div>
-                <div className='grid justify-items-center'>
-                    <p className='lightBrownText text-3xl text-center mb-3.5'>Favorites</p>
-                    <hr />
-                </div>
-                <div className='grid grid-cols-3 gap-1 mt-3 p-5 overflow-y-scroll h-96'>
-                    {favorites.map((pokemon: any, index: number) => {
-                        const pokeSprite: string = pokemon.sprites?.front_default;
-                        return (
-                            <div className='bottomBorder m-1 flex flex-col p-1 text-xs' key={index}>
-                                {pokemon && (
-                                    <>
-                                        <PokemonItem
-                                            pokemonName={`${pokemon.name}`}
-                                            spriteUrl={pokeSprite}
-                                            index={index}
-                                            getPokemonFavoriteFromNavProp={() => getPokemonFromFavorite(pokemon.name)} />
-                                    </>
-                                )}
-                            </div>
-                        )
-                    })}
-                </div>
-            </div>}
+            {show &&
+                <div className='drawer fadeIn rounded-md mt-5 h-80'>
+                    <div className='grid grid-cols-1 justify-items-end'>
+                        <button onClick={handleClose} className='m-5' type='button'>
+                            <img className='h-9 w-auto' src={Close} alt="close icon" />
+                        </button>
+                    </div>
+                    <div className='grid justify-items-center'>
+                        <p className='lightBrownText text-3xl text-center mb-3.5'>Favorites</p>
+                        <hr />
+                    </div>
+                    <div className='grid grid-cols-3 gap-1 mt-3 p-5 overflow-y-scroll h-96'>
+                        {favorites.map((pokemon: any, index: number) => {
+                            const pokeSprite: string = pokemon.sprites?.front_default;
+                            return (
+                                <div className='bottomBorder m-1 flex flex-col p-1 text-xs hover:animate-pulse' key={index}>
+                                    {pokemon && (
+                                        <>
+                                            <PokemonItem
+                                                pokemonName={`${pokemon.name}`}
+                                                spriteUrl={pokeSprite}
+                                                index={index}
+                                                getPokemonFavoriteFromNavProp={() => getPokemonFromFavorite(pokemon.name)} />
+                                        </>
+                                    )}
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>}
             <div className="mt-5 flex justify-between">
                 <div className='bgLightBrown h-28 w-16 grid justify-items-center rounded-e-md'>
                     <button onClick={() => {
@@ -101,7 +105,6 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                         className='w-max'
                         type='button'
                         title='Pokemon Randomizer'
-                        // maybe when random is clicked we can lift up the pokemon object to parent and handle data their
                         onClick={async () => {
                             getRandomPokemon();
                         }} >
@@ -110,6 +113,10 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                 </div>
                 <div className='min-w-fit grid justify-items-center'>
                     <p className='brownFont text-6xl flex flex-row quattroFont'>P<img className='w-8 h-8 mt-4' src={PokeballImg} alt="pokeball" />kedex</p>
+                    {errMessage ?
+                     <div className='absolute top-24 text-red-600 animate-bounce'>Please enter valid name or id.</div>
+                    :
+                    null}
                     <div className='flex flex-col justify-center gap-2'>
                         <input
                             className='searchBar mt-11 mb-20 shadow-lg shadow-amber-700'
@@ -119,17 +126,11 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                             onMouseLeave={() => setInputEntered(false)}
                             onChange={(e) => {
                                 setPokemonVal(e.target.value);
-                                // getSearchValue(e.target.value);
                             }}
                             onKeyDown={async e => {
-                                if (e.key === 'Enter' && pokemonVal) {
-                                    // console.log('Enter pressed!!');
+                                if (e.key === 'Enter') {
                                     // console.log(pokemonVal);
-                                    // await handleSearch(pokemonVal.toLowerCase());
                                     getSearchValue(pokemonVal.toLowerCase());
-                                }
-                                else {
-                                    alert('Please enter pokemon name or ID in the input field.');
                                 }
                             }}
                         />
