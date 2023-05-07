@@ -132,7 +132,7 @@ const App = () => {
           getRandomPokemon={handleRandomPokemon}
           getSearchValue={handleSearchValue}
           errMessage={userError} />
-        <div className="mainContent container mx-auto">
+        <div className="mainContent container mx-0 px-0 sm:mx-auto">
 
           {
             isLoading
@@ -151,33 +151,33 @@ const App = () => {
                   </div>
                 </div>
                 :
-                <div className="grid xl:grid-cols-3 lg:grid-cols-2 mx-32 xl:gap-20 lg:gap-16 items-start mb-8">
+                <div className="grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 mx-32 lg:gap-16 items-start mb-8">
                   {/* First columns */}
                   <div>
-                    <div className='grid grid-cols-2 mb-5'>
+                    <div className='grid grid-cols-1 md:grid-cols-2 mb-5'>
                       <p className='italic headers'>{FormatAndCapitalize(pokemonName)}</p>
                       <p className='text-end font-bold headers'>{pokemonId}</p>
                     </div>
-                    <div className='flex flex-col justify-center'>
-                      <img className='h-60 w-auto fadeIn' src={pokemonImg} alt="temp-img" />
+                    <div className='flex justify-center'>
+                      <img className='h-80 sm:h-60 w-auto fadeIn' src={pokemonImg} alt="temp-img" />
                     </div>
-                    <div className='grid grid-cols-7 mt-5 gap-4'>
+                    <div className='flex flex-col md:grid md:grid-cols-7 mt-5 md:gap-4'>
                       <p className={typeClass}>{FormatAndCapitalize(type)}</p>
-                      <p className='text-center col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
+                      <p className='text-center  space-x-4 md:col-span-5 darkBrownText self-center text-ellipsis'><img className='inline h-7 w-auto' src={Location} alt="location icon" /> {location}</p>
                       <button
                         type='button'
-                        className='flex justify-end'
+                        className='flex justify-center sm:justify-end'
                         onClick={() => setIsSaved(!isSaved)}>
                         <img
                           title='Add to Favorites'
-                          className='h-9 w-auto items-end hover:scale-125'
+                          className='h-5 sm:h-9 w-auto items-start sm:items-end hover:scale-125'
                           src={isSaved ? Heart : HeartOutline}
                           alt="Favorites Icon" />
                       </button>
                     </div>
                   </div>
                   {/* Second Column */}
-                  <div className=''>
+                  <div className='mt-4 lg:mt-0'>
                     <p className='headers'>Evolutions</p>
                     <div className='grid grid-cols-6 mt-7'>
                       <img className='col-span-1 h-12 w-auto flex justify-end self-center' src={Pawprints} alt="Footprints" />
@@ -198,13 +198,13 @@ const App = () => {
                     <p className='overflow-auto h-32'>{movesArray}</p>
                   </div>
                   {/* Third Column */}
-                  <div className='lg:grid lg:grid-span-3 lg:grid-flow-col lg:gap-96 xl:flex xl:flex-col'>
-                    <div className='w-full'>
+                  <div className='md:flex md:flex-col-reverse lg:grid lg:grid-cols-2 lg:col-span-2 xl:col-span-1 xl:flex xl:flex-col'>
+                    <div className='mt-10 lg:mt-0 '>
                       <p className='headers'><img className='inline h-9 w-auto mr-2' src={Brain} alt="quotes icon" />Fun Factoids</p>
                       <p className='mt-7 lg:inline'>{funFactoids}</p>
                     </div>
-                    <div className='w-3/4'>
-                      <p className='headers mt-6'>Abilities</p>
+                    <div className='w-3/4 lg:px-8 xl:px-0'>
+                      <p className=' headers mt-6 lg:mt-0 xl:mt-10'>Abilities</p>
                       <p>{abilities}</p>
                     </div>
                   </div>

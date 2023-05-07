@@ -4,9 +4,8 @@ import PokeballRandomizerImg from '../assets/qmark.png';
 import Close from '../assets/cross.svg';
 import '../index.css';
 import { useEffect, useState } from 'react';
-import { GetPokemonByNameOrId, GetFavorites } from '../services/data';
+import { GetFavorites, GetPokemonDataForFavorites } from '../services/data';
 import PokemonItem from './PokemonItemComponent';
-import { GetPokemonDataForFavorites } from '../services/data';
 
 interface NavbarProps {
     getPokemonFromFavorite: (name: string) => void;
