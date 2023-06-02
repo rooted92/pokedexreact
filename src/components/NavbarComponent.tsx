@@ -92,7 +92,7 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                     </div>
                 </div>}
             <div className="mt-5 flex justify-between">
-                <div className='bgLightBrown h-28 w-16 grid justify-items-center rounded-e-md'>
+                <div className='bgLightBrown h-32 w-24 py-2 grid justify-items-center rounded-e-md'>
                     <button onClick={() => {
                         handleShow();
                         setIsDisplayed(true);
@@ -100,6 +100,7 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                     } title='Favorites' type='button'>
                         <img className='h-9 w-9' src={PokeheartImg} alt="Favorites Icon" />
                     </button>
+                    <p>Favorites</p>
                     <button
                         className='w-max'
                         type='button'
@@ -109,6 +110,7 @@ const NavbarComponent = ({ getSearchValue, getRandomPokemon, getPokemonFromFavor
                         }} >
                         <img className='h-9 w-9' src={PokeballRandomizerImg} alt="pokemon randomizer icon" />
                     </button>
+                    <p>Random</p>
                 </div>
                 <div className='min-w-fit grid justify-items-center'>
                     <p className='brownFont text-6xl flex flex-row quattroFont'>P<img className='w-8 h-8 mt-4' src={PokeballImg} alt="pokeball" />kedex</p>
